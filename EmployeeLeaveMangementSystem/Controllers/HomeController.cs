@@ -5,18 +5,25 @@ using System.Diagnostics;
 using static System.Net.WebRequestMethods;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmployeeLeaveMangementSystem.Controllers
 {
+   
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
         private readonly ApplicationDbContext _db;
-        //rivate readonly ILogger<CategoryController> _logger;
-        public HomeController(ApplicationDbContext db)
+        private readonly UserManager<IdentityUser> _userManager;
+        
+
+        //private readonly ILogger<CategoryController> _logger;
+        public HomeController(ApplicationDbContext db, UserManager<IdentityUser> userManager)
         {
             _db = db;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -35,29 +42,62 @@ namespace EmployeeLeaveMangementSystem.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Employee obj)
+        /* public IActionResult Create(Employee obj)
+         {
+
+             if (ModelState.IsValid)
+             {
+                 _db.Employees.Add(obj);
+                 _db.SaveChanges();
+                 TempData["success"] = "Employee Added successfully";
+                 return RedirectToAction("Details");
+             }
+             return View();
+         }*/
+
+
+
+
+        public async Task<IActionResult> Create(Employee obj)
         {
-           
             if (ModelState.IsValid)
             {
-                _db.Employees.Add(obj);
-                _db.SaveChanges();
-                TempData["success"] = "Employee Added successfully";
-                return RedirectToAction("Details");
+                var user = new IdentityUser
+                {
+                    Email = obj.Email,
+                    PhoneNumber = obj.PhoneNumber,
+                    UserName = obj.Email
+                };
+                var result = await _userManager.CreateAsync(user, "Employee@12");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Employee");
+                    _db.Employees.Add(obj);
+                    _db.SaveChanges();
+                    TempData["success"] = "Employee Added successfully";
+                    return RedirectToAction("Details");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
             }
-            return View();
+            return View(obj);
         }
-
+         
 
         public IActionResult Edit(string Id)
         {
-                var employeeFromDb = _db.Employees.Find(Id);
-                if (employeeFromDb == null)
-                {
-                    return NotFound();
-                }
-                return View(employeeFromDb);
-         }
+            var employeeFromDb = _db.Employees.Find(Id);
+            if (employeeFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(employeeFromDb);
+        }
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -73,7 +113,7 @@ namespace EmployeeLeaveMangementSystem.Controllers
                 }
                 employeeToEdit.FirstName = obj.FirstName;
                 employeeToEdit.LastName = obj.LastName;
-                employeeToEdit.UserName = obj.UserName;
+               
                 employeeToEdit.PhoneNumber = obj.PhoneNumber;
                 employeeToEdit.Email = obj.Email;
                 employeeToEdit.Salary = obj.Salary;
@@ -100,7 +140,7 @@ namespace EmployeeLeaveMangementSystem.Controllers
         //POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        
+
         public IActionResult DeleteByName(string Id)
         {
             var employeeToDelete = _db.Employees.FirstOrDefault(e => e.Id == Id);
