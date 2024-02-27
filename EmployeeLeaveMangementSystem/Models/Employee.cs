@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EmployeeLeaveMangementSystem.Models
 {
-    public class Employee 
+    public class Employee :IdentityUser
     {
         [Key]
         public string Id { get; set; }
@@ -15,6 +15,11 @@ namespace EmployeeLeaveMangementSystem.Models
         public string PhoneNumber { get; set; }
         [Required]
         public string Email { get; set; }
+
+        public int SickLeave { get; set; } 
+        public int VacationLeave { get; set; } 
+        public int MaternityLeave { get; set; } 
+
 
 
         [ConcurrencyCheck]

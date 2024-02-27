@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeLeaveMangementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240227080752_Initial")]
+    [Migration("20240227142119_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -42,11 +42,20 @@ namespace EmployeeLeaveMangementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("MaternityLeave")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Salary")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SickLeave")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VacationLeave")
                         .HasColumnType("int");
 
                     b.Property<Guid>("Version")

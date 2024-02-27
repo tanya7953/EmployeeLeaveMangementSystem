@@ -17,17 +17,21 @@ namespace EmployeeLeaveMangementSystem.Controllers
 
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
-        
+        private readonly IConfiguration _iconfiguration;
+
 
         //private readonly ILogger<CategoryController> _logger;
-        public HomeController(ApplicationDbContext db, UserManager<IdentityUser> userManager)
+        public HomeController(ApplicationDbContext db, UserManager<IdentityUser> userManager,IConfiguration iconfiguration)
         {
             _db = db;
             _userManager = userManager;
+            _iconfiguration = iconfiguration;
         }
 
         public IActionResult Index()
         {
+
+            
             return View();
         }
         public IActionResult Details()
@@ -35,6 +39,33 @@ namespace EmployeeLeaveMangementSystem.Controllers
             IEnumerable<Employee> objEmployeeList = _db.Employees;
             return View(objEmployeeList);
         }
+
+        public IActionResult Profile()
+        {
+
+            var sickLeave = _iconfiguration.GetValue<int>("SickLeave");
+            var vacationLeave = _iconfiguration.GetValue<int>("VacationLeave");
+            var maternityLeave = _iconfiguration.GetValue<int>("MaternityLeave");
+
+            var user = _userManager.GetUserAsync(User).Result;
+            var employee = _db.Employees.FirstOrDefault(e => e.Email == user.Email);
+
+            if (employee != null)
+            {
+                ViewBag.Email = employee.Email;
+                ViewBag.FirstName = employee.FirstName;
+                ViewBag.LastName = employee.LastName;
+                ViewBag.Salary =employee.Salary;
+                ViewBag.PhoneNumber = employee.PhoneNumber;
+                ViewBag.SickLeave = employee.SickLeave;
+                ViewBag.VacationLeave = employee.VacationLeave;
+                ViewBag.MaternityLeave = employee.MaternityLeave;
+            }
+
+            return View();
+        }
+
+
         //GET
         public IActionResult Create()
         {
@@ -60,18 +91,28 @@ namespace EmployeeLeaveMangementSystem.Controllers
 
         public async Task<IActionResult> Create(Employee obj)
         {
+
             if (ModelState.IsValid)
             {
+                var sickLeave = _iconfiguration["SickLeave"];
+                var vacationLeave = _iconfiguration["VacationLeave"];
+                var maternityLeave = _iconfiguration["MaternityLeave"];
+
+
                 var user = new IdentityUser
                 {
                     Email = obj.Email,
                     PhoneNumber = obj.PhoneNumber,
                     UserName = obj.Email
+                   
                 };
                 var result = await _userManager.CreateAsync(user, "Employee@12");
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Employee");
+                    obj.SickLeave = int.Parse(sickLeave);
+                    obj.VacationLeave = int.Parse(vacationLeave);
+                    obj.MaternityLeave = int.Parse(maternityLeave);
                     _db.Employees.Add(obj);
                     _db.SaveChanges();
                     TempData["success"] = "Employee Added successfully";

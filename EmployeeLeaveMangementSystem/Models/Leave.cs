@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using static EmployeeLeaveMangementSystem.Models.EnumDefinition;
 
 namespace EmployeeLeaveMangementSystem.Models
 {
@@ -8,10 +9,10 @@ namespace EmployeeLeaveMangementSystem.Models
         public int Id { get; set; }
         [Required]
         public string EmployeeId { get; set; }
-        
+
         [Required]
         [Display(Name = "Leave Type")]
-        public string LeaveType { get; set; }
+        public LeaveType LeaveType { get; set; }
 
         [Required]
         [Display(Name = "Start Date")]
@@ -26,7 +27,8 @@ namespace EmployeeLeaveMangementSystem.Models
         [Display(Name = "Reason")]
         public string Reason { get; set; }
         [Display(Name = "Status")]
-        public string Status { get; set; } = "Pending";
+        public LeaveStatus Status { get; set; } = LeaveStatus.Pending;
 
     }
 }
+

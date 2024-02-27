@@ -60,6 +60,9 @@ namespace EmployeeLeaveMangementSystem.Migrations
                     Salary = table.Column<int>(type: "int", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SickLeave = table.Column<int>(type: "int", nullable: false),
+                    VacationLeave = table.Column<int>(type: "int", nullable: false),
+                    MaternityLeave = table.Column<int>(type: "int", nullable: false),
                     Version = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -74,11 +77,11 @@ namespace EmployeeLeaveMangementSystem.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LeaveType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LeaveType = table.Column<string>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Status = table.Column<string>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
