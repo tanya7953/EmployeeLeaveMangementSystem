@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EmployeeLeaveMangementSystem.Models
 {
-    public class Employee :IdentityUser
+    public class Employee 
     {
         [Key]
         public string Id { get; set; }

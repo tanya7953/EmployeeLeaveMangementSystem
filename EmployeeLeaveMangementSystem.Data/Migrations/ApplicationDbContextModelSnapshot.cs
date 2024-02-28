@@ -72,6 +72,10 @@ namespace EmployeeLeaveMangementSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EmployeeId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -79,9 +83,8 @@ namespace EmployeeLeaveMangementSystem.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LeaveType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LeaveType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Reason")
                         .IsRequired()
@@ -90,9 +93,8 @@ namespace EmployeeLeaveMangementSystem.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

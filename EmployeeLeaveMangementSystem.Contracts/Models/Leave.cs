@@ -6,10 +6,13 @@ namespace EmployeeLeaveMangementSystem.Models
 {
     public class Leave
     {
+        
         public int Id { get; set; }
+        
         [Required]
         public string EmployeeId { get; set; }
-
+        [Required]
+        public string Email {  get; set; }
         [Required]
         [Display(Name = "Leave Type")]
         public LeaveType LeaveType { get; set; }

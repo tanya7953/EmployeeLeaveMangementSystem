@@ -1,22 +1,70 @@
 ﻿@using  Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager;
 @using System.Security.Claims;
 @model Leave
 
 @{
     string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var user = await UserManager.FindByIdAsync(userId);
+    string userEmail = user?.Email;
 }
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    select {
+        appearance: none;
+    }
+
+    .text-danger {
+        color: red;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+</style>
 <h2>Create Leave</h2>
 
 <form asp-action="Create" method="post">
+    <br />
     <div class="form-group">
         <label asp-for="EmployeeId"></label>
         <input asp-for="EmployeeId" class="form-control" value="@userId" />
         <span asp-validation-for="EmployeeId" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" value="@userEmail" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
 
     <div class="form-group">
-        
+
         <label asp-for="LeaveType"></label>
         <select asp-for="LeaveType" class="form-control">
             <option value="">Select Leave Type</option>
@@ -45,9 +93,9 @@
         <span asp-validation-for="Reason" class="text-danger"></span>
     </div>
     @* <div class="form-group">
-        <label asp-for="Status"></label>
-        <input asp-for="Status" class="form-control" />
-        <span asp-validation-for="Status" class="text-danger"></span>
+    <label asp-for="Status"></label>
+    <input asp-for="Status" class="form-control" />
+    <span asp-validation-for="Status" class="text-danger"></span>
     </div> *@
 
 

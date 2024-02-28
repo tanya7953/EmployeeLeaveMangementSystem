@@ -1,9 +1,20 @@
+using EmployeeLeaveMangementSystem.Application;
 using EmployeeLeaveMangementSystem.Data;
+using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using static System.Formats.Asn1.AsnWriter;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).Enrich
+    .FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -13,10 +24,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
+
+
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddLamar(new ApplicationRegistry());
+builder.Host.UseLamar();
 
 var app = builder.Build();
 
@@ -28,7 +46,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-        app.UseHsts();
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -48,7 +66,7 @@ using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    var roles = new[] { "Admin", "Employee"};
+    var roles = new[] { "Admin", "Employee" };
 
     foreach (var role in roles)
     {
@@ -56,7 +74,7 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 }
-using(var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     string email = "admin@admin.com";
@@ -64,7 +82,7 @@ using(var scope = app.Services.CreateScope())
     string phoneNumber = "9999999999";
     if (await userManager.FindByEmailAsync(email) == null)
     {
-        var user = new IdentityUser { UserName = email, Email = email ,PhoneNumber=phoneNumber};
+        var user = new IdentityUser { UserName = email, Email = email, PhoneNumber = phoneNumber };
         var result = await userManager.CreateAsync(user, password);
 
         if (result.Succeeded)
@@ -73,5 +91,6 @@ using(var scope = app.Services.CreateScope())
         }
     }
 }
+
 
 app.Run();

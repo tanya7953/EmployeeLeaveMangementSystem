@@ -1,49 +1,79 @@
 ﻿@model IEnumerable<Employee>
 
 
-<h2>User Profile</h2>
+<style>
 
+    .container {
+        margin-top: 50px;
+        text-align: center;
+    }
 
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-<br />
-<br />
-<div>
-    <label>First Name:</label>
-    <span>@ViewBag.FirstName</span>
-</div>
+    th, td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
 
-<div>
-    <label>Last Name:</label>
-    <span>@ViewBag.LastName</span>
+    th {
+        font-weight: bold;
+    }
+</style>
 
-</div>
-<div>
-    <label>Salary:</label>
-    <span>@ViewBag.Salary</span>
-</div>
-<div>
-    <label>Email:</label>
-    <span>@ViewBag.Email</span>
-</div>
-<div>
-    <label>Phone Number:</label>
-    <span>@ViewBag.PhoneNumber</span>
-</div>
+<div class="container">
+    <h2>User Profile</h2>
 
-<div>
-    <label>Number Of Sick Leaves:</label>
-    <span>@ViewBag.SickLeave      </span>
+    <br />
+    <br />
 
-</div>
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
 
-<div>
-    <label>Number Of Vacation Leaves:</label>
-    <span>@ViewBag.VacationLeave</span>
+        <tr>
+            <td>First Name</td>
+            <td>@ViewBag.FirstName</td>
+        </tr>
 
-</div>
+        <tr>
+            <td>Last Name</td>
+            <td>@ViewBag.LastName</td>
+        </tr>
 
-<div>
-    <label>Number Of Maternity Leaves:</label>
-    <span>@ViewBag.MaternityLeave</span>
+        <tr>
+            <td>Salary</td>
+            <td>@ViewBag.Salary</td>
+        </tr>
 
+        <tr>
+            <td>Email</td>
+            <td>@ViewBag.Email</td>
+        </tr>
+
+        <tr>
+            <td>Phone Number</td>
+            <td>@ViewBag.PhoneNumber</td>
+        </tr>
+
+        <tr>
+            <td>Number Of Sick Leaves</td>
+            <td>@ViewBag.SickLeave</td>
+        </tr>
+
+        <tr>
+            <td>Number Of Vacation Leaves</td>
+            <td>@ViewBag.VacationLeave</td>
+        </tr>
+
+        <tr>
+            <td>Number Of Maternity Leaves</td>
+            <td>@ViewBag.MaternityLeave</td>
+        </tr>
+    </table>
 </div>
