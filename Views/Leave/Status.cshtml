@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Leave>
+
+<style>
+
+    .container {
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        font-weight: bold;
+    }
+</style>
+
+<div class="container">
+    <h2>User Leave Status</h2>
+
+    <br />
+    <br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Leave Type
+            </th>
+            <th>
+                Leave Status
+            </th>
+            <th>
+                Start Date
+            </th>
+            <th>
+                End date
+            </th>
+            
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in ViewBag.employee)
+        {
+            <tr>
+                <td>
+                    @obj.LeaveType
+                </td>
+                <td>
+                    <b>@obj.Status</b>
+                </td>
+                <td>
+                    
+                        @obj.StartDate.Date.ToString("dd-MM-yyyy")
+                </td>
+                <td>
+                        @obj.EndDate.Date.ToString("dd-MM-yyyy")
+                </td>
+            </tr>
+                
+        }
+    </tbody>
+        </table>
+                
+</div>
+
+
