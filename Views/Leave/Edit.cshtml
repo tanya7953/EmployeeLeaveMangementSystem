@@ -1,14 +1,17 @@
-﻿@using  Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @using System.Security.Claims;
+@inject UserManager<IdentityUser> UserManager;
 @model Leave
 
 @{
     string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var user = await UserManager.FindByIdAsync(userId);
+    string userEmail = user?.Email;
 }
-<h2>Create Leave</h2>
+<h2>Update Leave Status</h2>
 
-<form asp-action="Create" method="post">
+<form asp-action="Edit" method="post">
     <div class="form-group">
         <label asp-for="EmployeeId"></label>
         <input asp-for="EmployeeId" class="form-control" value="@userId" />
@@ -16,7 +19,13 @@
     </div>
 
     <div class="form-group">
-        
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" value="@Model.Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+
         <label asp-for="LeaveType"></label>
         <select asp-for="LeaveType" class="form-control">
             <option value="">Select Leave Type</option>
@@ -44,11 +53,17 @@
         <input asp-for="Reason" class="form-control" />
         <span asp-validation-for="Reason" class="text-danger"></span>
     </div>
-    @* <div class="form-group">
-        <label asp-for="Status"></label>
-        <input asp-for="Status" class="form-control" />
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div> *@
+    <div class="form-group">
+    <label asp-for="Status"></label>
+    
+        <select asp-for="Status" class="form-control">
+            <option value="">Leave Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+    <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
 
 
     <button type="submit" class="btn btn-primary">Submit</button>

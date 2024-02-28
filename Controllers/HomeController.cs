@@ -21,11 +21,12 @@ namespace EmployeeLeaveMangementSystem.Controllers
 
 
         //private readonly ILogger<CategoryController> _logger;
-        public HomeController(ApplicationDbContext db, UserManager<IdentityUser> userManager,IConfiguration iconfiguration)
+        public HomeController(ApplicationDbContext db, UserManager<IdentityUser> userManager,IConfiguration iconfiguration, ILogger<HomeController> logger)
         {
             _db = db;
             _userManager = userManager;
             _iconfiguration = iconfiguration;
+            _logger = logger;
         }
 
         public IActionResult Index()
