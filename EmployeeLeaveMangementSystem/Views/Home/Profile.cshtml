@@ -1,8 +1,10 @@
 ﻿@model IEnumerable<Employee>
 
-
+<partial name="_Notification" />
 <style>
-
+    body {
+        background-image: url('/image/BG.png')
+    }
     .container {
         margin-top: 50px;
         text-align: center;
@@ -25,7 +27,7 @@
 </style>
 
 <div class="container">
-    <h2>User Profile</h2>
+    <h2 style="color: #7EC8E3;">User Profile</h2>
 
     <br />
     <br />
@@ -48,7 +50,7 @@
 
         <tr>
             <td>Salary</td>
-            <td>@ViewBag.Salary</td>
+            <td>$ @ViewBag.Salary</td>
         </tr>
 
         <tr>

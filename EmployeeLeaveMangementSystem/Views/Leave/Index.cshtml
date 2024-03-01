@@ -1,26 +1,73 @@
 ﻿@model List<EmployeeLeaveMangementSystem.Models.Leave>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body {
+        background-image: url('/image/BG.png')
+    }
+    h2 {
+        color: #7EC8E3;
+        margin-bottom: 1rem; 
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+        .table th {
+            background-color: #7EC8E3;
+            color: #fff; 
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .table td {
+            padding: 0.5rem;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2; 
+        }
+    .btn-group a {
+        background-color: #7EC8E3;
+        color: #fff; 
+        padding: 0.3rem 0.5rem;
+        margin-right: 0.5rem;
+        text-decoration: none;
+    }
+
+        .btn-group a:hover {
+            background-color: #7EC8E3;
+        }
+
+ 
+    .bi {
+        vertical-align: middle;
+    }
+
+</style>
 
 <h2>Leaves</h2>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Employee Id</th>
+            @* <th>Employee Id</th> *@
+            <th>Email</th>
             <th>Leave Type</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Reason</th>
             <th>Status</th>
+            <th>Edit Action</th>
+            <th>Delete Action</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var leave in Model)
         {
             <tr>
-                <td>@leave.EmployeeId</td>
+                @* <td>@leave.EmployeeId</td> *@
+                <td>@leave.Email</td>
                 <td>@leave.LeaveType</td>
-                <td>@leave.StartDate</td>
-                <td>@leave.EndDate</td>
+                <td>@leave.StartDate.Date.ToString("dd/MM/yyyy")</td>
+                <td>@leave.EndDate.Date.ToString("dd/MM/yyyy")</td>
                 <td>@leave.Reason</td>
                 
                 <td>@leave.Status</td>

@@ -2,17 +2,59 @@
 @inject SignInManager<IdentityUser> SignInManager
 @using System.Security.Claims;
 @model Leave
-
+<partial name="_Notification" />
 @{
     string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
+
+<style>
+    body {
+        background-image: url('/image/BG.png')
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    .text-danger {
+        color: #dc3545;
+    }
+
+    .btn-primary {
+        background-color: #7EC8E3;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+    }
+
+        .btn-primary:hover {
+            opacity: 0.8;
+        }
+
+</style>
 <h2>Delete Leave </h2>
 
 <form asp-action="Delete" method="post">
-    <div class="form-group">
+    <div class="form-group" style="display:none">
         <label asp-for="EmployeeId"></label>
-        <input asp-for="EmployeeId" class="form-control" value="@userId" />
+        <input asp-for="EmployeeId" class="form-control" value="@Model.EmployeeId" />
         <span asp-validation-for="EmployeeId" class="text-danger"></span>
+    </div>
+    <div class="form-group" style="display:none">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" value="@Model.Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -20,9 +62,9 @@
         <label asp-for="LeaveType"></label>
         <select asp-for="LeaveType" class="form-control">
             <option value="">Select Leave Type</option>
-            <option value="Sick">Sick Leave</option>
-            <option value="Vacation">Vacation Leave</option>
-            <option value="Maternity">Maternity Leave</option>
+            <option value="SickLeave">Sick Leave</option>
+            <option value="VacationLeave">Vacation Leave</option>
+            <option value="MaternityLeave">Maternity Leave</option>
         </select>
         <span asp-validation-for="LeaveType" class="text-danger"></span>
     </div>
@@ -55,7 +97,7 @@
         </select>
         <span asp-validation-for="Status" class="text-danger"></span>
     </div>
-
+    <br />
 
     <button type="submit" class="btn btn-primary">Delete</button>
 </form>

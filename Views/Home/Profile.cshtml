@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Employee>
+
+
+<style>
+
+    .container {
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        font-weight: bold;
+    }
+</style>
+
+<div class="container">
+    <h2>User Profile</h2>
+
+    <br />
+    <br />
+
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+
+        <tr>
+            <td>First Name</td>
+            <td>@ViewBag.FirstName</td>
+        </tr>
+
+        <tr>
+            <td>Last Name</td>
+            <td>@ViewBag.LastName</td>
+        </tr>
+
+        <tr>
+            <td>Salary</td>
+            <td>@ViewBag.Salary</td>
+        </tr>
+
+        <tr>
+            <td>Email</td>
+            <td>@ViewBag.Email</td>
+        </tr>
+
+        <tr>
+            <td>Phone Number</td>
+            <td>@ViewBag.PhoneNumber</td>
+        </tr>
+
+        <tr>
+            <td>Number Of Sick Leaves</td>
+            <td>@ViewBag.SickLeave</td>
+        </tr>
+
+        <tr>
+            <td>Number Of Vacation Leaves</td>
+            <td>@ViewBag.VacationLeave</td>
+        </tr>
+
+        <tr>
+            <td>Number Of Maternity Leaves</td>
+            <td>@ViewBag.MaternityLeave</td>
+        </tr>
+    </table>
+</div>

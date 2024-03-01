@@ -20,7 +20,7 @@
             </li>
         }
 
-        else
+        else if (User.IsInRole("Employee"))
         {
             <li class="nav-item dropdown">
                 <a class="navlink-danger dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">Employee</a>
@@ -30,16 +30,17 @@
                     <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout">Logout</a></li>
                 </ul>
             </li>
-            
+
         }
+        
 
             
 }
 else
 {
-    <li class="nav-item">
+   @*  <li class="nav-item">
         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
+    </li> *@
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>

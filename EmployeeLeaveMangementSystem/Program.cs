@@ -1,20 +1,23 @@
 using EmployeeLeaveMangementSystem.Application;
 using EmployeeLeaveMangementSystem.Data;
-using Lamar.Microsoft.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using static System.Formats.Asn1.AsnWriter;
-
+using Lamar.Microsoft.DependencyInjection;
+using EmployeeLeaveMangementSystem.Services;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration).Enrich
-    .FromLogContext()
-    .CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(logger);
+Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+             
+            .WriteTo.Console()
+            .CreateLogger();
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -24,8 +27,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
-
-
+/*builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();*/
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
@@ -35,6 +37,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddLamar(new ApplicationRegistry());
 builder.Host.UseLamar();
+
 
 var app = builder.Build();
 

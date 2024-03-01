@@ -7,7 +7,8 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-
+using EmployeeLeaveMangementSystem.Services;
+using Serilog;
 namespace EmployeeLeaveMangementSystem.Controllers
 {
    
@@ -18,52 +19,68 @@ namespace EmployeeLeaveMangementSystem.Controllers
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _iconfiguration;
+        private readonly IEmployeeServices _EmployeeServices;
 
 
-        //private readonly ILogger<CategoryController> _logger;
-        public HomeController(ApplicationDbContext db, UserManager<IdentityUser> userManager,IConfiguration iconfiguration, ILogger<HomeController> logger)
+
+        public HomeController(ApplicationDbContext db, UserManager<IdentityUser> userManager,IConfiguration iconfiguration, ILogger<HomeController> logger,IEmployeeServices EmployeeServices)
         {
             _db = db;
             _userManager = userManager;
             _iconfiguration = iconfiguration;
             _logger = logger;
+            _EmployeeServices = EmployeeServices;
+
         }
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Leave Management System Executing..");
 
-            
             return View();
         }
         public IActionResult Details()
         {
-            IEnumerable<Employee> objEmployeeList = _db.Employees;
-            return View(objEmployeeList);
+            try
+            {
+                IEnumerable<Employee> objEmployeeList = _db.Employees;
+                _logger.LogInformation("Employee Details =>{@objEmployeeList}", objEmployeeList);
+                return View(objEmployeeList);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching employee details.");
+                return StatusCode(500);
+            }
         }
 
         public IActionResult Profile()
         {
-
-            var sickLeave = _iconfiguration.GetValue<int>("SickLeave");
-            var vacationLeave = _iconfiguration.GetValue<int>("VacationLeave");
-            var maternityLeave = _iconfiguration.GetValue<int>("MaternityLeave");
-
-            var user = _userManager.GetUserAsync(User).Result;
-            var employee = _db.Employees.FirstOrDefault(e => e.Email == user.Email);
-
-            if (employee != null)
+            try
             {
-                ViewBag.Email = employee.Email;
-                ViewBag.FirstName = employee.FirstName;
-                ViewBag.LastName = employee.LastName;
-                ViewBag.Salary =employee.Salary;
-                ViewBag.PhoneNumber = employee.PhoneNumber;
-                ViewBag.SickLeave = employee.SickLeave;
-                ViewBag.VacationLeave = employee.VacationLeave;
-                ViewBag.MaternityLeave = employee.MaternityLeave;
-            }
+                var user = _userManager.GetUserAsync(User).Result;
+                var employee = _EmployeeServices.GetEmployeeProfile(user.Email);
 
-            return View();
+                if (employee != null)
+                {
+                    ViewBag.Email = employee.Email;
+                    ViewBag.FirstName = employee.FirstName;
+                    ViewBag.LastName = employee.LastName;
+                    ViewBag.Salary = employee.Salary;
+                    ViewBag.PhoneNumber = employee.PhoneNumber;
+                    ViewBag.SickLeave = employee.SickLeave;
+                    ViewBag.VacationLeave = employee.VacationLeave;
+                    ViewBag.MaternityLeave = employee.MaternityLeave;
+                }
+                _logger.LogInformation("Profile of Employee");
+
+                return View();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching employee Profile.");
+                return StatusCode(500);
+            }
         }
 
 
@@ -74,130 +91,162 @@ namespace EmployeeLeaveMangementSystem.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        /* public IActionResult Create(Employee obj)
-         {
-
-             if (ModelState.IsValid)
-             {
-                 _db.Employees.Add(obj);
-                 _db.SaveChanges();
-                 TempData["success"] = "Employee Added successfully";
-                 return RedirectToAction("Details");
-             }
-             return View();
-         }*/
-
+       
 
 
 
         public async Task<IActionResult> Create(Employee obj)
         {
-
-            if (ModelState.IsValid)
+            try
             {
-                var sickLeave = _iconfiguration["SickLeave"];
-                var vacationLeave = _iconfiguration["VacationLeave"];
-                var maternityLeave = _iconfiguration["MaternityLeave"];
+                if (ModelState.IsValid)
+                {
+                    var sickLeave = _iconfiguration["SickLeave"];
+                    var vacationLeave = _iconfiguration["VacationLeave"];
+                    var maternityLeave = _iconfiguration["MaternityLeave"];
 
 
-                var user = new IdentityUser
-                {
-                    Email = obj.Email,
-                    PhoneNumber = obj.PhoneNumber,
-                    UserName = obj.Email
-                   
-                };
-                var result = await _userManager.CreateAsync(user, "Employee@12");
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, "Employee");
-                    obj.SickLeave = int.Parse(sickLeave);
-                    obj.VacationLeave = int.Parse(vacationLeave);
-                    obj.MaternityLeave = int.Parse(maternityLeave);
-                    _db.Employees.Add(obj);
-                    _db.SaveChanges();
-                    TempData["success"] = "Employee Added successfully";
-                    return RedirectToAction("Details");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
+                    var user = new IdentityUser
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        Email = obj.Email,
+                        PhoneNumber = obj.PhoneNumber,
+                        UserName = obj.Email
+
+                    };
+                    var result = await _userManager.CreateAsync(user, "Employee@12");
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(user, "Employee");
+                        obj.SickLeave = int.Parse(sickLeave);
+                        obj.VacationLeave = int.Parse(vacationLeave);
+                        obj.MaternityLeave = int.Parse(maternityLeave);
+                        _db.Employees.Add(obj);
+                        _db.SaveChanges();
+                        TempData["success"] = "Employee Added successfully";
+                        return RedirectToAction("Details");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
                     }
                 }
+                return View(obj);
             }
-            return View(obj);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while Creating employee details.");
+                return StatusCode(500);
+            }
         }
          
 
         public IActionResult Edit(string Id)
         {
-            var employeeFromDb = _db.Employees.Find(Id);
-            if (employeeFromDb == null)
+            try
             {
-                return NotFound();
+                var employeeFromDb = _EmployeeServices.EditEmployee(Id);
+                if (employeeFromDb == null)
+                {
+                    return NotFound();
+                }
+
+                return View(employeeFromDb);
             }
-            return View(employeeFromDb);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while editing employee details.");
+                return StatusCode(500);
+            }
         }
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Employee obj)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var employeeToEdit = _db.Employees.FirstOrDefault(e => e.Id == obj.Id);
-
-                if (employeeToEdit == null)
+                if (ModelState.IsValid)
                 {
-                    return NotFound();
+                    var editedEmployee = _EmployeeServices.EditEmployee(obj);
+                    if (editedEmployee == null)
+                    {
+                        return NotFound();
+                    }
+                    TempData["success"] = "Employee Details have been edited successfully";
+                    return RedirectToAction("Details");
                 }
-                employeeToEdit.FirstName = obj.FirstName;
-                employeeToEdit.LastName = obj.LastName;
-               
-                employeeToEdit.PhoneNumber = obj.PhoneNumber;
-                employeeToEdit.Email = obj.Email;
-                employeeToEdit.Salary = obj.Salary;
-                employeeToEdit.Version = Guid.NewGuid();
-                _db.SaveChanges();
 
-                TempData["success"] = "Employee Details is edited successfully";
-                return RedirectToAction("Details");
+                return View(obj);
             }
-            return View(obj);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while Editing employee details.");
+                return StatusCode(500);
+            }
         }
 
 
         public IActionResult Delete(string Id)
         {
-            var employeeFromDb = _db.Employees.Find(Id);
-            if (employeeFromDb == null)
+            try
             {
-                return NotFound();
+                var employeeFromDb = _EmployeeServices.DeleteEmployee(Id);
+                if (employeeFromDb == null)
+                {
+                    return NotFound();
+                }
+                return View(employeeFromDb);
             }
-            return View(employeeFromDb);
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while Deleting employee details.");
+                return StatusCode(500);
+            }
         }
 
         //POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
 
-        public IActionResult DeleteByName(string Id)
+        /* public IActionResult DeleteByName(string Id)
+         {
+             var employeeToDelete = _db.Employees.FirstOrDefault(e => e.Id == Id);
+
+             if (employeeToDelete == null)
+             {
+                 return NotFound();
+             }
+
+             _db.Employees.Remove(employeeToDelete);
+             _db.SaveChanges();
+             TempData["success"] = "Employee deleted successfully";
+             return RedirectToAction("Details");
+         }*/
+
+        public async Task<IActionResult> DeleteByName(string email)
         {
-            var employeeToDelete = _db.Employees.FirstOrDefault(e => e.Id == Id);
-
-            if (employeeToDelete == null)
+            try
             {
-                return NotFound();
+                var success = await _EmployeeServices.DeleteEmployeeByEmail(email);
+                if (success)
+                {
+                    TempData["success"] = "Employee and associated leave entries deleted successfully";
+                }
+                else
+                {
+                    TempData["error"] = "Employee not found";
+                }
+                return RedirectToAction("Details");
             }
-
-            _db.Employees.Remove(employeeToDelete);
-            _db.SaveChanges();
-            TempData["success"] = "Employee deleted successfully";
-            return RedirectToAction("Details");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while Deleting employee details.");
+                return StatusCode(500);
+            }
         }
-
 
         public IActionResult Privacy()
         {

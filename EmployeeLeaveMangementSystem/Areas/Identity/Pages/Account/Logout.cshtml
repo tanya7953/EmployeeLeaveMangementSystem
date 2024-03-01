@@ -3,8 +3,25 @@
 @{
     ViewData["Title"] = "Log out";
 }
-
-<header>
+<style>
+    body {
+        background-image: url('/image/BG.png')
+    }
+   
+    h1 {
+        color: #7EC8E3;
+        margin-bottom: 20px; 
+    }
+    .form-inline {
+        display: inline-block; 
+    }
+    
+        .btn-link:hover {
+            text-decoration: underline; 
+        }
+   
+</style>
+<header style="background:transparent">
     <h1>@ViewData["Title"]</h1>
     @{
         if (User.Identity?.IsAuthenticated ?? false)
