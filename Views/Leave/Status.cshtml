@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<Leave>
-
+<partial name="_Notification" />
 <style>
-
+    body {
+        background-image: url('/image/BG.png')
+    }
     .container {
         margin-top: 50px;
         text-align: center;
@@ -24,7 +26,7 @@
 </style>
 
 <div class="container">
-    <h2>User Leave Status</h2>
+    <h2 style="color: #7EC8E3;">User Leave Status</h2>
 
     <br />
     <br />
@@ -49,7 +51,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var obj in ViewBag.employee)
+        @foreach (var obj in ViewBag.leaves)
         {
             <tr>
                 <td>

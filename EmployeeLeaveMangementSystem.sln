@@ -3,13 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeLeaveMangementSystem", "EmployeeLeaveMangementSystem\EmployeeLeaveMangementSystem.csproj", "{01208977-6811-4B6C-B72C-DBE36AA4881F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeLeaveMangementSystem.Contracts", "EmployeeLeaveMangementSystem.Contracts\EmployeeLeaveMangementSystem.Contracts.csproj", "{7AFB4663-9738-4CAB-98F8-CEC7C399FDBA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeLeaveMangementSystem.Data", "EmployeeLeaveMangementSystem.Data\EmployeeLeaveMangementSystem.Data.csproj", "{51B76B51-8CDD-4F19-84AA-C83CD95A4208}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeLeaveMangementSystem.Services", "EmployeeLeaveMangementSystem.Services\EmployeeLeaveMangementSystem.Services.csproj", "{24337708-B182-4E83-B307-58CC9552ECC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeLeaveMangementSystem", "EmployeeLeaveMangementSystem\EmployeeLeaveMangementSystem.csproj", "{01208977-6811-4B6C-B72C-DBE36AA4881F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +15,6 @@ Global
 		{01208977-6811-4B6C-B72C-DBE36AA4881F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01208977-6811-4B6C-B72C-DBE36AA4881F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01208977-6811-4B6C-B72C-DBE36AA4881F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7AFB4663-9738-4CAB-98F8-CEC7C399FDBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7AFB4663-9738-4CAB-98F8-CEC7C399FDBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7AFB4663-9738-4CAB-98F8-CEC7C399FDBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7AFB4663-9738-4CAB-98F8-CEC7C399FDBA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51B76B51-8CDD-4F19-84AA-C83CD95A4208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51B76B51-8CDD-4F19-84AA-C83CD95A4208}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51B76B51-8CDD-4F19-84AA-C83CD95A4208}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51B76B51-8CDD-4F19-84AA-C83CD95A4208}.Release|Any CPU.Build.0 = Release|Any CPU
-		{24337708-B182-4E83-B307-58CC9552ECC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24337708-B182-4E83-B307-58CC9552ECC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24337708-B182-4E83-B307-58CC9552ECC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24337708-B182-4E83-B307-58CC9552ECC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

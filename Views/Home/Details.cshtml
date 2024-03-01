@@ -1,11 +1,75 @@
 ﻿
 @model IEnumerable<Employee>
 
+<partial name="_Notification" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
 
-<div class="container p-3">
+<style>
+    body {
+        background-image: url('/image/BG.png')
+    }
+   
+    .container {
+        padding: 1.5rem;
+        background-color: #f8f9fa; 
+    }
+
+        
+        .container h2 {
+            color: #7EC8E3;
+        }
+
+   
+    .btn-primary {
+        background-color: #7EC8E3;
+        color: #fff; 
+    }
+
+   
+    
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th {
+            background-color: #7EC8E3;
+            color: #fff;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .table td {
+            padding: 0.5rem;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+    .btn-group a {
+        background-color: #7EC8E3;
+        color: #fff;
+        padding: 0.3rem 0.5rem;
+        margin-right: 0.5rem;
+        text-decoration: none;
+    }
+
+        .btn-group a:hover {
+            background-color: #7EC8E3;
+        }
+
+
+    .bi {
+        vertical-align: middle;
+    }
+
+</style>
+
+
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Employee List</h2>
+            <h2 style="color:#7EC8E3;">Employee List</h2>
         </div>
         <div class="col-6 text-end">
             <a asp-controller="Home" asp-action="Create" class="btn btn-primary">
@@ -14,7 +78,7 @@
         </div>
     </div>
 
-</div>
+
 <br />
 <br />
 <table class="table table-bordered table-striped" style="width:100%">
@@ -33,16 +97,22 @@
                 Phone Number
             </th>
             <th>
-                Salary
+                Salary (in $)
             </th>
             <th>
-                Sick Leaves
+                Sick Leave
             </th>
             <th>
-                Vacation Leaves
+                Vacation Leave
             </th>
             <th>
-                Maternity/Paternity Leaves
+                Maternity Leave
+            </th>
+            <th>
+                Edit Action
+            </th>
+            <th>
+                Delete Action
             </th>
 
         </tr>
@@ -66,26 +136,27 @@
                         @obj.Salary
                 </td>
                 <td>
-                    @obj.SickLeave
+                        @obj.SickLeave
                 </td>
                 <td>
-                    @obj.VacationLeave
+                        @obj.VacationLeave
                 </td>
                 <td>
-                    @obj.MaternityLeave
+                        @obj.MaternityLeave
                 </td>
                 
                 <td>
                     <div class="w-75 btn-group" role="group">
                         <a asp-controller="Home" asp-action="Edit" asp-route-id="@obj.Id"
-                           class="btn btn-primary mx-2"><i class="bi bi-pencil-fill"></i> Edit</a>
+                           class="btn btn-primary mx-2"><i class="bi bi-pencil-fill"></i> &nbsp; Edit</a>
 
                     </div>
                 </td>
                 <td>
                     <div class="w-75 btn-group" role="group">
                         <a asp-controller="Home" asp-action="Delete" asp-route-id="@obj.Id"
-                           class="btn btn-primary mx-2"><i class="bi bi-trash3-fill"></i> Delete</a>
+                                   class="btn btn-primary mx-2"><i class="bi bi-trash3-fill"></i> &nbsp; Delete
+                         </a>
 
                     </div>
                 </td> 
@@ -93,4 +164,5 @@
         }
     </tbody>
 </table>
+
 

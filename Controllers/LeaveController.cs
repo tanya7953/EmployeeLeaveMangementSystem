@@ -1,10 +1,11 @@
 ﻿using EmployeeLeaveMangementSystem.Data;
 using EmployeeLeaveMangementSystem.Models;
+using EmployeeLeaveMangementSystem.Services;
 using JasperFx.CodeGeneration.Frames;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using static EmployeeLeaveMangementSystem.Models.EnumDefinition;
 
 namespace EmployeeLeaveMangementSystem.Controllers
@@ -14,48 +15,38 @@ namespace EmployeeLeaveMangementSystem.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        public LeaveController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        private readonly IConfiguration _iconfiguration;
+        private readonly ILeaveServices _LeaveServices;
+        public LeaveController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IConfiguration iconfiguration,ILeaveServices LeaveServices)
         {
             _context = context;
             _userManager = userManager;
+            _iconfiguration = iconfiguration;
+            _LeaveServices = LeaveServices;
         }
 
         public IActionResult Index()
         {
-            Dictionary<string, LeaveType> enumMapping = new Dictionary<string, LeaveType>
-    {
-        { "SickLeave", LeaveType.SickLeave },
-        { "VacationLeave", LeaveType.VacationLeave },
-        { "MaternityLeave", LeaveType.MaternityLeave },
-    };
-
-            var leavesFromDb = _context.Leaves.ToList();
-            var leaves = new List<Leave>();
-
-            foreach (var leaveFromDb in leavesFromDb)
-            {
-                LeaveType leaveType;
-                if (enumMapping.TryGetValue(leaveFromDb.LeaveType.ToString(), out leaveType))
-                {
-                    var leave = new Leave
-                    {
-                        Id = leaveFromDb.Id,
-                        EmployeeId = leaveFromDb.EmployeeId,
-                        Email = leaveFromDb.Email,
-                        LeaveType = leaveType,
-                        StartDate = leaveFromDb.StartDate,
-                        EndDate = leaveFromDb.EndDate,
-                        Reason = leaveFromDb.Reason,
-                        Status = leaveFromDb.Status
-                    };
-                    leaves.Add(leave);
-                }
-            }
-
+            var leaves = _LeaveServices.GetAllLeaves();
             return View(leaves);
         }
 
 
+
+        public async Task<IActionResult> Status()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var leaves = await _LeaveServices.GetLeavesByEmailAsync(user.Email);
+
+            
+            if (leaves != null)
+            {
+                ViewBag.leaves = leaves;
+
+            }
+
+            return View(leaves);
+        }
 
 
 
@@ -65,35 +56,22 @@ namespace EmployeeLeaveMangementSystem.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Leave/Create")]
-        public IActionResult Create(Leave leave)
+        /* [Route("Leave/Create")]*/
+        public async Task<IActionResult> Create(Leave leave)
         {
-            
             if (ModelState.IsValid)
             {
-                
-                _context.Leaves.Add(leave);
-                _context.SaveChanges();
-                return Redirect("/Home/Index");
+                var result = await _LeaveServices.CreateLeave(leave);
+                if (result)
+                    return RedirectToAction("Status");
+                TempData["success"] = "Leave Created Succesfully";
             }
             return View();
         }
-        
-        public IActionResult Status()
-        {
-            var user = _userManager.GetUserAsync(User).Result;
-            var employee = _context.Leaves.Where(e => e.Email == user.Email).ToList();
-            if (employee != null)
-            {
-                ViewBag.employee = employee;
-                
-            }
 
-            return View();
-        }
         public IActionResult Edit(int Id)
         {
-            var employeeFromDb = _context.Leaves.Find(Id);
+            var employeeFromDb = _LeaveServices.EditLeave(Id);
             if (employeeFromDb == null)
             {
                 return NotFound();
@@ -103,7 +81,7 @@ namespace EmployeeLeaveMangementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        /*[Route("Leave/Edit")]*/
+        [Route("Leave/Edit")]
         /* public IActionResult Edit(Leave obj)
          {
              if (ModelState.IsValid)
@@ -126,74 +104,163 @@ namespace EmployeeLeaveMangementSystem.Controllers
  */
 
 
+        /* public IActionResult Edit(Leave obj)
+         {
+             if (ModelState.IsValid)
+             {
+                 var leaveToEdit = _context.Leaves.FirstOrDefault(e => e.Id == obj.Id);
+
+                 if (leaveToEdit == null)
+                 {
+                     return NotFound();
+                 }
+                 leaveToEdit.Status = obj.Status;
+                 if (obj.Status == LeaveStatus.Approved)
+                 {
+                     var employeeEmail = obj.Email;
+                     var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeEmail);
+                     if (employee != null)
+                     {
+                         TimeSpan duration = obj.EndDate - obj.StartDate;
+                         int numberOfDays = (int)duration.TotalDays;
+                         switch (obj.LeaveType)
+                         {
+                             case LeaveType.SickLeave:
+                                 employee.SickLeave -= numberOfDays;
+                                 break;
+                             case LeaveType.VacationLeave:
+                                 employee.VacationLeave -= numberOfDays;
+                                 break;
+                             case LeaveType.MaternityLeave:
+                                 employee.MaternityLeave -= numberOfDays;
+                                 break;
+                         }
+                         _context.SaveChanges();
+                     }
+                 }
+                 _context.SaveChanges();
+                 TempData["success"] = "Leave request is edited successfully";
+                 return RedirectToAction("Index");
+             }
+             return View(obj);
+         }
+ */
+
+
         public IActionResult Edit(Leave obj)
         {
             if (ModelState.IsValid)
             {
-                var leaveToEdit = _context.Leaves.FirstOrDefault(e => e.Id == obj.Id);
-
+                var leaveToEdit = _context.Leaves.Where(e => e.Email == obj.Email).ToList();
                 if (leaveToEdit == null)
                 {
                     return NotFound();
                 }
+               /* obj.leaveToEdit = leaveToEdit;*/
                 leaveToEdit.Status = obj.Status;
-                if (obj.Status == LeaveStatus.Approved)
+                TimeSpan duration = obj.EndDate - obj.StartDate;
+                int numberOfDays = (int)duration.TotalDays + 1;
+                var employeeId = leaveToEdit.Email;
+                var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
+
+                if (employee != null)
                 {
-                    var employeeEmail = obj.Email;
-                    var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeEmail);
-                    if (employee != null)
+                    if (obj.Status == LeaveStatus.Approved)
                     {
-                        TimeSpan duration = obj.EndDate - obj.StartDate ;
-                        
-                        int numberOfDays = (int)duration.TotalDays + 1;
+                       
                         switch (obj.LeaveType)
-                        {
+                        {  
                             case LeaveType.SickLeave:
-                                /*if (employee.SickLeave == 0 && numberOfDays > 0 || employee.SickLeave < 0)
+                                employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
+                                int remainingSickLeave = employee.SickLeave - numberOfDays;
+                                if (remainingSickLeave > 0)
+                                {
+                                    employee.SickLeave = remainingSickLeave;
+                                    obj.Status = LeaveStatus.Approved;
+                                    Console.WriteLine(obj.Status);
+                                    _context.SaveChanges();
+                                }
+                                else
                                 {
                                     obj.Status = LeaveStatus.Rejected;
-                                }*/
-                                
-                                    employee.SickLeave -= numberOfDays;
-                                
+                                    TempData["error"] = "Insufficient sick leave balance.";
+                                    _context.SaveChanges();
+                                }
                                 break;
                             case LeaveType.VacationLeave:
-                                /*if (employee.VacationLeave == 0 && numberOfDays > 0 || employee.VacationLeave < 0)
+                                employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
+                                int remainingVacationLeave = employee.VacationLeave - numberOfDays;
+                                if (remainingVacationLeave >= 0)
+                                {
+                                    employee.VacationLeave = remainingVacationLeave;
+                                    obj.Status = LeaveStatus.Approved;
+                                    _context.SaveChanges();
+                                }
+                                else
                                 {
                                     obj.Status = LeaveStatus.Rejected;
-                                }*/
-                                
-                                    employee.VacationLeave -= numberOfDays;
-                                
+                                    TempData["error"] = "Insufficient vacation leave balance.";
+                                    _context.SaveChanges();
+                                }
                                 break;
+
                             case LeaveType.MaternityLeave:
-                                /*if (employee.MaternityLeave == 0 && numberOfDays > 0 || employee.MaternityLeave < 0)
+                                employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
+                                int remainingMaternityLeave = employee.MaternityLeave - numberOfDays;
+                                if (remainingMaternityLeave > 0)
+                                {
+                                    employee.MaternityLeave = remainingMaternityLeave;
+                                    obj.Status = LeaveStatus.Approved;
+                                    _context.SaveChanges();
+
+                                }
+                                else
                                 {
                                     obj.Status = LeaveStatus.Rejected;
-                                }*/
-                                
-                                    employee.MaternityLeave -= numberOfDays;
-                                
+                                    TempData["error"] = "Insufficient maternity leave balance.";
+                                    _context.SaveChanges();
+                                }
                                 break;
+                            default:
+                                TempData["error"] = "Invalid leave type.";
+                                return RedirectToAction("Index");
+                                
                         }
                         _context.SaveChanges();
+                        
                     }
+                    else if (obj.Status == LeaveStatus.Rejected)
+                    {
+                        obj.Status = LeaveStatus.Rejected;
+                        _context.SaveChanges();
+                    }
+
+                            
+                    TempData["success"] = "Leave request is updated successfully";
+                    return RedirectToAction("Index");
                 }
-                _context.SaveChanges();
-                TempData["success"] = "Leave request is edited successfully";
-                return RedirectToAction("Index");
+                else
+                {
+                    return NotFound();
+                }
             }
+
             return View(obj);
         }
 
 
+
+
+
+
         public IActionResult Delete(int Id)
         {
-            var employeeFromDb = _context.Leaves.Find(Id);
+            var employeeFromDb = _LeaveServices.DeleteLeave(Id);
             if (employeeFromDb == null)
             {
                 return NotFound();
             }
+            TempData["success"] = "Employee Leave deleted successfully";
             return View(employeeFromDb);
         }
 
@@ -203,7 +270,7 @@ namespace EmployeeLeaveMangementSystem.Controllers
 
         public IActionResult DeleteByName(int Id)
         {
-            var employeeToDelete = _context.Leaves.FirstOrDefault(e => e.Id == Id);
+            var employeeToDelete = _LeaveServices.DeleteLeaveByName(Id);
 
             if (employeeToDelete == null)
             {
@@ -212,11 +279,9 @@ namespace EmployeeLeaveMangementSystem.Controllers
 
             _context.Leaves.Remove(employeeToDelete);
             _context.SaveChanges();
-            TempData["success"] = "Employee Leave deleted successfully";
+            /*TempData["success"] = "Employee Leave deleted successfully";*/
             return RedirectToAction("Index");
         }
-
-
 
 
     }
