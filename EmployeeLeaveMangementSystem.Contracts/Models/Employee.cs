@@ -5,6 +5,7 @@ namespace EmployeeLeaveMangementSystem.Models
     public class Employee
     {
         [Key]
+        //comment
         public string Id { get; set; }
         [Required]
         public string FirstName { get; set; }
