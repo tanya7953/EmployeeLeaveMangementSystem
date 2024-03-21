@@ -4,24 +4,35 @@
     ViewData["Title"] = "Log out";
 }
 <style>
-    body {
-        background-image: url('/image/BG.png')
+    header {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
     }
-   
-    h1 {
-        color: #7EC8E3;
-        margin-bottom: 20px; 
-    }
-    .form-inline {
-        display: inline-block; 
-    }
-    
-        .btn-link:hover {
-            text-decoration: underline; 
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
         }
-   
+        header form {
+            margin-top: 10px;
+        }
+        header button {
+            padding: 5px 10px;
+            border: 1px solid #333;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+        header p {
+            margin: 0;
+            font-size: 16px;
+            color: #666;
+        }
+
 </style>
-<header style="background:transparent">
+
+<header>
     <h1>@ViewData["Title"]</h1>
     @{
         if (User.Identity?.IsAuthenticated ?? false)

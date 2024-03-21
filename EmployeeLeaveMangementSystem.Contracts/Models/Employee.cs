@@ -24,9 +24,5 @@ namespace EmployeeLeaveMangementSystem.Models
 
         [ConcurrencyCheck]
         public Guid Version { get; set; }
-
-
-
-
     }
 }

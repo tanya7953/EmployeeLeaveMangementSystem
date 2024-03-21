@@ -6,17 +6,16 @@
     ViewData["Title"] = "Log in";
 }
 <style>
-    body{
-        bbackground-image: url('/image/BG.png')
-    }
+
     .container {
         margin-top: 50px;
-       
-       
+        text-align: center;
     }
-    section{
-        background-color:white;
+
+    .form-label {
+        font-weight: bold;
     }
+
     .form-control {
         border-radius: 0;
     }
@@ -26,36 +25,35 @@
     }
 
     .btn-primary {
-        background-color: #7EC8E3;
-        border-color: #7EC8E3;
+        background-color: #007bff;
+        border-color: #007bff;
     }
 
         .btn-primary:hover {
-            background-color: #7EC8E3;
-            border-color: #7EC8E3;
+            background-color: #0056b3;
+            border-color: #0056b3;
         }
 
     .btn-outline-primary {
-        color: #7EC8E3;
-        border-color: #7EC8E3;
+        color: #007bff;
+        border-color: #007bff;
     }
 
         .btn-outline-primary:hover {
-            color: #7EC8E3;
-            border-color: #7EC8E3;
+            color: #0056b3;
+            border-color: #0056b3;
         }
 
     .btn-link {
-        color: #7EC8E3;
+        color: #007bff;
     }
 
         .btn-link:hover {
             text-decoration: underline;
         }
 
-
 </style>
- <div class="column">
+<div class="row">
     <div class="col-md-4 mx-auto rounded border p-3">
         <section>
             <h2 class="text-center mb-3">Please Log In.</h2>
@@ -87,12 +85,14 @@
                     <a class="btn btn-outline-primary" href="/" role="button">Cancel</a>
 
                 </div>
-               
+                <div>
+
+                   @*  <a class="btn btn-link" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a> *@
+
+
+                </div>
             </form>
         </section>
     </div>
-    
-    
 
-</div> 
-
+</div>

@@ -3,16 +3,13 @@
 @inject UserManager<IdentityUser> UserManager;
 @using System.Security.Claims;
 @model Leave
-<partial name="_Notification" />
+
 @{
     string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var user = await UserManager.FindByIdAsync(userId);
     string userEmail = user?.Email;
 }
 <style>
-    body{
-        background-image: url('/image/BG.png')
-    }
     .form-group {
         margin-bottom: 20px;
     }
@@ -39,7 +36,8 @@
     }
 
     .btn-primary {
-        background-color: #7EC8E3;
+        background-color: #007bff;
+        color: #fff;
         border: none;
         padding: 10px 20px;
         border-radius: 4px;
@@ -47,11 +45,10 @@
     }
 
         .btn-primary:hover {
-            background-color: #7EC8E3;
+            background-color: #0056b3;
         }
 </style>
-<br />
-<h2 style="color: #7EC8E3; text-align:center">Create Leave</h2>
+<h2>Create Leave</h2>
 
 <form asp-action="Create" method="post">
     <br />
